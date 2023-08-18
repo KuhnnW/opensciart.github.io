@@ -1,0 +1,50 @@
+// 粒子对象
+function Particle() {
+  // ... 
+  // 其他属性和方法的定义
+
+  // 随机选择一个形状的控制点作为初始位置
+  this.staticTarget = random(shapePoints);
+
+  // 更新粒子状态
+  this.update = function () {
+    // 鼠标的位置
+    var mousePos = createVector(mouseX - width / 2, mouseY - height / 2);
+    
+    // 计算粒子到鼠标的向量
+    var toMouse = p5.Vector.sub(mousePos, this.position);
+
+    if (toMouse.mag() < 60) { // 如果粒子在鼠标位置的120像素范围内
+      // 使粒子在鼠标周围旋转
+      toMouse.rotate(TWO_PI / (5 * 60)); // 速度为每5s一周
+      this.velocity.lerp(toMouse, 0.2); // 平滑过渡速度
+    } else {
+      // 计算粒子到静态目标的向量
+      var toTarget = p5.Vector.sub(this.staticTarget, this.position);
+      this.velocity.lerp(toTarget, 0.02); // 平滑过渡速度
+    }
+
+    // 更新粒子位置
+    this.position.add(this.velocity);
+
+    // 限制粒子在运动范围内
+    this.position.x = constrain(
+      this.position.x,
+      -width / 2,
+      width / 2
+    );
+    this.position.y = constrain(
+      this.position.y,
+      -height / 2,
+      height / 2
+    );
+  };
+
+  // 显示粒子
+  this.display = function () {
+    // 设置粒子颜色
+    fill(255);
+    // 绘制粒子
+    ellipse(this.position.x, this.position.y, this.size, this.size);
+  };
+}
